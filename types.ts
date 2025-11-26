@@ -39,6 +39,7 @@ export interface SEOFields {
 export interface BlogState {
   id?: string; // Added for CRUD
   title: string;
+  categoryId?: string;
   category: string;
   shortDescription: string;
   slug: string;

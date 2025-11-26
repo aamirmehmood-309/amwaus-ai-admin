@@ -8,6 +8,7 @@ const mapApiToBlog = (data: any): BlogState => {
   return {
     id: data.id?.toString(),
     title: data.title || '',
+    categoryId: data.category_id?.toString() || '', // Map category_id
     category: data.category_name || data.category || 'Uncategorized',
     shortDescription: data.short_description || '', // Maps snake_case to camelCase
     slug: data.slug || '',
@@ -72,18 +73,44 @@ export const api = {
 
   /**
    * Store/Update blog content
-   * Endpoint: /api/blog/store_blog_content
+   * Endpoint: /api/blog/store_blog_content (Create) OR /api/blog/update_blog_content/:id (Update)
    */
   storeBlog: async (payload: PublishPayload): Promise<BlogState> => {
-    // We might need to map it back to snake_case for the server, 
-    // but typically modern endpoints might accept JSON. 
-    // If the server expects form-data or specific keys, we would adjust here.
-    const response = await fetch(`${BASE_URL}api/blog/store_blog_content`, {
+    let endpoint = `${BASE_URL}api/blog/store_blog_content`;
+    
+    // Check if we are updating an existing blog
+    if (payload.blog.id) {
+        endpoint = `${BASE_URL}api/blog/update_blog_content/${payload.blog.id}`;
+    }
+
+    // Transform payload to match backend validation structure if needed
+    // But based on "use this validation object", the backend likely expects these keys in the body
+    const backendPayload = {
+        title: payload.blog.title,
+        short_description: payload.blog.shortDescription,
+        meta_title: payload.blog.seoFields.metaTitle,
+        meta_description: payload.blog.seoFields.metaDescription,
+        content: payload.blog.body,
+        blog_img: payload.blog.featuredImage, // Note: If this is base64, ensure backend handles it. 
+        slug: payload.blog.slug,
+        author_id: 1, // Hardcoded or from auth context
+        category_id: payload.blog.categoryId,
+        keywords: payload.blog.seoFields.keywords.join(','),
+        status: payload.blog.status === 'PUBLISHED' ? 'true' : 'false',
+        // Include other fields if necessary
+    };
+
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(backendPayload)
     });
-    if (!response.ok) throw new Error('Failed to save blog');
+    
+    if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Backend Validation Error:", errorData);
+        throw new Error(errorData.message || 'Failed to save blog');
+    }
     const data = await response.json();
     return mapApiToBlog(data);
   },

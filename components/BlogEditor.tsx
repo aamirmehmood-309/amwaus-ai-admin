@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Save, Globe, Eye, Image as ImageIcon, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
-import { BlogState, SEOAuditResult, ImageMeta, PublishPayload } from '../types';
+import { BlogState, SEOAuditResult, ImageMeta, PublishPayload, Category } from '../types';
 import { calculateSEOScore } from '../utils/seoAudit';
 import { RichEditor } from './RichEditor';
 import { SEOCard } from './SEOCard';
@@ -11,6 +11,7 @@ import { clsx } from 'clsx';
 
 const INITIAL_STATE: BlogState = {
   title: '',
+  categoryId: '', // Added for validation
   category: 'childcare',
   shortDescription: '',
   slug: '',
@@ -38,6 +39,7 @@ interface BlogEditorProps {
 
 export const BlogEditor: React.FC<BlogEditorProps> = ({ initialData, onBack, onSaveSuccess }) => {
   const [blog, setBlog] = useState<BlogState>(initialData || INITIAL_STATE);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [seoAudit, setSeoAudit] = useState<SEOAuditResult | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -46,6 +48,23 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ initialData, onBack, onS
   const [collectedImages, setCollectedImages] = useState<ImageMeta[]>([]);
   const [activeTab, setActiveTab] = useState<'content' | 'seo'>('content');
   const [notification, setNotification] = useState<{type: 'success'|'error', msg: string} | null>(null);
+
+  // Load Categories for Dropdown
+  useEffect(() => {
+    const fetchCats = async () => {
+        try {
+            const cats = await api.getAllCategories();
+            setCategories(cats);
+            // Set default categoryId if not present but categories exist
+            if (!blog.categoryId && cats.length > 0) {
+                setBlog(prev => ({ ...prev, categoryId: cats[0].id, category: cats[0].name }));
+            }
+        } catch (e) {
+            console.error("Failed to load categories", e);
+        }
+    };
+    fetchCats();
+  }, []);
 
   // Initialize from props if changed
   useEffect(() => {
@@ -116,7 +135,33 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ initialData, onBack, onS
     }
   };
 
+  const validateBlog = (blogData: BlogState): string | null => {
+    const errors: string[] = [];
+    if (!blogData.title) errors.push("Title is required!");
+    if (!blogData.shortDescription) errors.push("Short description is required!");
+    if (!blogData.seoFields.metaTitle) errors.push("Meta title is required!");
+    if (!blogData.seoFields.metaDescription) errors.push("Meta description is required!");
+    if (!blogData.body || blogData.body === '<p></p>') errors.push("Content is required!");
+    if (!blogData.featuredImage) errors.push("Blog image is required!");
+    if (!blogData.slug) errors.push("The slug field is required.");
+    
+    // Assuming categoryId is mandatory based on validation object "category_id"
+    if (!blogData.categoryId) errors.push("The category id field is required.");
+
+    if (errors.length > 0) {
+        return errors[0]; // Return first error
+    }
+    return null;
+  };
+
   const handlePublish = async () => {
+    const validationError = validateBlog(blog);
+    if (validationError) {
+        setNotification({ type: 'error', msg: validationError });
+        setTimeout(() => setNotification(null), 4000);
+        return;
+    }
+
     setIsPublishing(true);
     const audit = calculateSEOScore(blog);
     
@@ -214,13 +259,20 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ initialData, onBack, onS
                   <div>
                     <select 
                       className="w-full h-8 rounded-lg border border-slate-300 bg-white px-3 text-sm focus:ring-2 focus:ring-primary-500"
-                      value={blog.category}
-                      onChange={(e) => setBlog({...blog, category: e.target.value})}
+                      value={blog.categoryId || ''}
+                      onChange={(e) => {
+                          const selectedCat = categories.find(c => c.id === e.target.value);
+                          setBlog({
+                              ...blog, 
+                              categoryId: e.target.value, 
+                              category: selectedCat ? selectedCat.name : ''
+                          });
+                      }}
                     >
-                      <option value="childcare">Childcare</option>
-                      <option value="daycare">Daycare</option>
-                      <option value="education">Education</option>
-                      <option value="parenting">Parenting Tips</option>
+                      <option value="" disabled>Select Category</option>
+                      {categories.map(cat => (
+                          <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
