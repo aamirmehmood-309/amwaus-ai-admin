@@ -7,6 +7,7 @@ import { BlogList } from './components/BlogList';
 import { CategoryList } from './components/CategoryList';
 import { Dashboard } from './components/Dashboard';
 import { SEODashboard } from './components/SEODashboard';
+import { api } from './services/api'; // Added api import
 import { clsx } from 'clsx';
 
 type View = 'dashboard' | 'list' | 'editor' | 'categories' | 'seo-dashboard';
@@ -31,8 +32,20 @@ export default function App() {
     });
   }, [currentTheme]);
 
-  const handleEdit = (blog: BlogState) => {
-    setSelectedBlog(blog);
+  const handleEdit = async (blog: BlogState) => {
+    if (blog.id) {
+        try {
+            // Fetch full content including body before opening editor
+            const fullBlog = await api.getBlogById(blog.id);
+            setSelectedBlog(fullBlog);
+        } catch (error) {
+            console.error("Failed to fetch full blog details", error);
+            // Fallback to the list data if fetch fails
+            setSelectedBlog(blog);
+        }
+    } else {
+        setSelectedBlog(blog);
+    }
     setCurrentView('editor');
   };
 

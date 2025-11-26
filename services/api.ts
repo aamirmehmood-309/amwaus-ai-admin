@@ -63,10 +63,11 @@ export const api = {
    * Fetch a single blog by ID
    */
   getBlogById: async (id: string): Promise<BlogState> => {
-    const response = await fetch(`${BASE_URL}api/blog/get_blog?id=${id}`);
+    const response = await fetch(`${BASE_URL}api/blog/get_blog_content/${id}`);
     if (!response.ok) throw new Error('Failed to fetch blog');
     const data = await response.json();
-    return mapApiToBlog(data);
+    const blogData = (data.id || data.title) ? data : (data.data || data);
+    return mapApiToBlog(blogData);
   },
 
   /**
