@@ -41,6 +41,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ initialData, onBack, onS
   const [seoAudit, setSeoAudit] = useState<SEOAuditResult | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isDraftSaving, setIsDraftSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [collectedImages, setCollectedImages] = useState<ImageMeta[]>([]);
   const [activeTab, setActiveTab] = useState<'content' | 'seo'>('content');
@@ -78,6 +79,40 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ initialData, onBack, onS
     if (!blog.slug && blog.title) {
       const slug = blog.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       setBlog(prev => ({ ...prev, slug }));
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    setIsDraftSaving(true);
+    const audit = calculateSEOScore(blog);
+    
+    const payload: PublishPayload = {
+      blog: {
+        ...blog,
+        status: 'DRAFT',
+      },
+      seoAudit: audit,
+      images: collectedImages,
+      auditLog: {
+        id: crypto.randomUUID(),
+        action: blog.id ? 'UPDATE_DRAFT' : 'CREATE_DRAFT',
+        actor: 'admin',
+        timestamp: Date.now(),
+        seoAudit: audit
+      }
+    };
+
+    try {
+      const savedBlog = await api.storeBlog(payload);
+      setBlog(savedBlog);
+      setNotification({ type: 'success', msg: 'Draft saved to server!' });
+      localStorage.removeItem('draft_blog');
+    } catch (error) {
+      console.error(error);
+      setNotification({ type: 'error', msg: 'Failed to save draft.' });
+    } finally {
+      setIsDraftSaving(false);
+      setTimeout(() => setNotification(null), 4000);
     }
   };
 
@@ -138,6 +173,9 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ initialData, onBack, onS
         </div>
 
         <div className="flex items-center gap-3">
+             <Button variant="secondary" size="sm" onClick={handleSaveDraft} isLoading={isDraftSaving}>
+               <Save size={16} className="mr-2" /> Save Draft
+             </Button>
              <Button variant="secondary" size="sm" onClick={() => window.print()}>
                <Eye size={16} className="mr-2" /> Preview
              </Button>
