@@ -1,11 +1,14 @@
-<div align="center">
+# Lumina Blog Admin
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Run: `npm install && npm run dev`
 
-  <h1>Built with AI Studio</h2>
+## Features
+- **Rich Text Editor**: TipTap based with Code View toggle.
+- **Image Handling**: Client-side resizing (max 1600px) + Base64 fallback.
+- **SEO Audit**: Real-time content analysis (Title, Meta, Alt tags, Keywords).
+- **Animations**: Framer Motion for premium feel.
+- **API**: Posts to `/api/blog/store_blog_content`.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
-
-  <a href="https://aistudio.google.com/apps">Start building</a>
-
-</div>
+## Configuration
+- **API Proxy**: Edit `vite.config.ts` to point `/api` to your actual backend.
+- **Image Upload**: Currently falls back to Base64. To enable server upload, modify `components/RichEditor.tsx` `handleImageUpload` function to POST to your upload endpoint instead of calling `processImage`.
