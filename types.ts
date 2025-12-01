@@ -54,9 +54,9 @@ export interface BlogState {
 export interface Category {
   id?: string;
   name: string;
-  slug: string;
-  description: string;
-  status?: 'active' | 'inactive';
+  // slug: string;
+  // description: string;
+  // status?: 'active' | 'inactive';
 }
 
 export interface AuditLogEntry {

@@ -174,7 +174,7 @@ export const Dashboard: React.FC = () => {
         </Card>
 
         {/* Category Distribution */}
-        <Card className="h-[400px] flex flex-col">
+        <Card className="h-[400px] flex flex-col overflow-y-auto">
           <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
             <PieChart size={18} className="text-purple-500" />
             Categories
@@ -219,7 +219,7 @@ export const Dashboard: React.FC = () => {
                  <th className="px-4 py-3 rounded-l-lg">Title</th>
                  <th className="px-4 py-3">Category</th>
                  <th className="px-4 py-3">Status</th>
-                 <th className="px-4 py-3 text-right rounded-r-lg">Published</th>
+                 {/* <th className="px-4 py-3 text-right rounded-r-lg">Published</th> */}
                </tr>
              </thead>
              <tbody className="divide-y divide-slate-100">
@@ -238,9 +238,9 @@ export const Dashboard: React.FC = () => {
                         {blog.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right text-slate-500">
+                    {/* <td className="px-4 py-3 text-right text-slate-500">
                       {blog.publishedAt ? new Date(blog.publishedAt).toLocaleDateString() : '-'}
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
              </tbody>

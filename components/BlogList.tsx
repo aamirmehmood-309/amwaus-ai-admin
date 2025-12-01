@@ -18,7 +18,7 @@ export const BlogList: React.FC<BlogListProps> = ({ onEdit, onCreate }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('table');
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -205,7 +205,7 @@ export const BlogList: React.FC<BlogListProps> = ({ onEdit, onCreate }) => {
                               <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center text-sm text-slate-400">
                                   <span className="flex items-center gap-1">
                                       <Calendar size={14} />
-                                      {blog.publishedAt ? new Date(blog.publishedAt).toLocaleDateString() : 'Unpublished'}
+                                      {/* {blog.publishedAt ? new Date(blog.publishedAt).toLocaleDateString() : 'Unpublished'} */}
                                   </span>
                                   
                                   <div className="flex gap-2">
@@ -217,8 +217,9 @@ export const BlogList: React.FC<BlogListProps> = ({ onEdit, onCreate }) => {
                                       <Edit2 size={16} />
                                       </button>
                                       <button 
+                                      disabled
                                       onClick={(e) => handleDelete(blog.id || '', e)}
-                                      className="p-1.5 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded transition-colors"
+                                      className="cursor-not-allowed p-1.5 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded transition-colors"
                                       title="Delete"
                                       >
                                       <Trash2 size={16} />
@@ -245,7 +246,7 @@ export const BlogList: React.FC<BlogListProps> = ({ onEdit, onCreate }) => {
                                           <th className="px-6 py-4">Title</th>
                                           <th className="px-6 py-4 w-32">Category</th>
                                           <th className="px-6 py-4 w-32">Status</th>
-                                          <th className="px-6 py-4 w-40">Date</th>
+                                          {/* <th className="px-6 py-4 w-40">Date</th> */}
                                           <th className="px-6 py-4 w-24 text-right">Actions</th>
                                       </tr>
                                   </thead>
@@ -290,9 +291,9 @@ export const BlogList: React.FC<BlogListProps> = ({ onEdit, onCreate }) => {
                                                       {blog.status}
                                                   </span>
                                               </td>
-                                              <td className="px-6 py-3 text-slate-500 text-xs">
+                                              {/* <td className="px-6 py-3 text-slate-500 text-xs">
                                                   {blog.publishedAt ? new Date(blog.publishedAt).toLocaleDateString() : '-'}
-                                              </td>
+                                              </td> */}
                                               <td className="px-6 py-3 text-right">
                                                   <div className="flex items-center justify-end gap-2">
                                                       <button 
@@ -303,8 +304,9 @@ export const BlogList: React.FC<BlogListProps> = ({ onEdit, onCreate }) => {
                                                           <Edit2 size={16} />
                                                       </button>
                                                       <button 
+                                                      disabled
                                                           onClick={(e) => handleDelete(blog.id || '', e)}
-                                                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                                                          className="cursor-not-allowed p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
                                                           title="Delete"
                                                       >
                                                           <Trash2 size={16} />

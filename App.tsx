@@ -67,7 +67,7 @@ export default function App() {
            <div className="bg-primary-600 rounded-lg p-1.5 transition-colors">
               <Layout size={20} />
             </div>
-            <span className="font-bold text-lg tracking-tight">Lumina<span className="text-primary-500 transition-colors">CMS</span></span>
+            <span className="font-bold text-lg tracking-tight">AMWAUS </span>
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
@@ -119,12 +119,12 @@ export default function App() {
             <span className="font-medium">Categories</span>
           </button>
 
-          <div className="text-xs uppercase font-bold text-slate-500 px-3 mt-8 mb-2">System</div>
+          {/* <div className="text-xs uppercase font-bold text-slate-500 px-3 mt-8 mb-2">System</div>
           
           <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-all text-slate-400">
             <Settings size={18} />
             <span className="font-medium">Settings</span>
-          </button>
+          </button> */}
         </nav>
       </aside>
 

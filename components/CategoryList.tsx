@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// import { motion, AnimatePresence } from 'framer-motion';
 import { Edit2, Trash2, Search, Plus, Tag, Check, X as XIcon } from 'lucide-react';
 import { Category } from '../types';
 import { api } from '../services/api';
@@ -14,7 +14,7 @@ export const CategoryList: React.FC = () => {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [formData, setFormData] = useState<Partial<Category>>({ name: '', slug: '', description: '', status: 'active' });
+  const [formData, setFormData] = useState<Partial<Category>>({ name: ''});
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -30,8 +30,8 @@ export const CategoryList: React.FC = () => {
       console.error(err);
       // Fallback mock data if API fails
       setCategories([
-        { id: '1', name: 'Childcare', slug: 'childcare', description: 'General childcare topics', status: 'active' },
-        { id: '2', name: 'Parenting', slug: 'parenting', description: 'Tips for parents', status: 'active' },
+        { id: '1', name: 'Childcare' },
+        { id: '2', name: 'Parenting'},
       ]);
     } finally {
       setIsLoading(false);
@@ -44,7 +44,7 @@ export const CategoryList: React.FC = () => {
       setFormData(category);
     } else {
       setEditingCategory(null);
-      setFormData({ name: '', slug: '', description: '', status: 'active' });
+      setFormData({ name: '' });
     }
     setIsModalOpen(true);
   };
@@ -128,9 +128,9 @@ export const CategoryList: React.FC = () => {
                     <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
                         <tr>
                             <th className="px-6 py-4">Name</th>
-                            <th className="px-6 py-4">Slug</th>
-                            <th className="px-6 py-4">Description</th>
-                            <th className="px-6 py-4">Status</th>
+                            {/* <th className="px-6 py-4">Slug</th> */}
+                            {/* <th className="px-6 py-4">Description</th>
+                            <th className="px-6 py-4">Status</th> */}
                             <th className="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
@@ -145,7 +145,7 @@ export const CategoryList: React.FC = () => {
                                         {cat.name}
                                     </div>
                                 </td>
-                                <td className="px-6 py-3 text-slate-500 font-mono text-xs">
+                                {/* <td className="px-6 py-3 text-slate-500 font-mono text-xs">
                                     {cat.slug}
                                 </td>
                                 <td className="px-6 py-3 text-slate-500 max-w-xs truncate">
@@ -158,18 +158,20 @@ export const CategoryList: React.FC = () => {
                                     )}>
                                         {cat.status === 'active' ? 'Active' : 'Inactive'}
                                     </span>
-                                </td>
+                                </td> */}
                                 <td className="px-6 py-3 text-right">
                                     <div className="flex items-center justify-end gap-2">
                                         <button 
+                                        disabled
                                             onClick={() => handleOpenModal(cat)}
-                                            className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-colors"
+                                            className="cursor-not-allowed p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-colors"
                                         >
                                             <Edit2 size={16} />
                                         </button>
                                         <button 
+                                        disabled
                                             onClick={() => handleDelete(cat.id!)}
-                                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                                            className="cursor-not-allowed p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
                                         >
                                             <Trash2 size={16} />
                                         </button>
@@ -206,7 +208,7 @@ export const CategoryList: React.FC = () => {
                     placeholder="e.g. Health & Safety"
                 />
             </div>
-            <div>
+            {/* <div>
                 <Label>Slug</Label>
                 <Input 
                     required 
@@ -214,8 +216,8 @@ export const CategoryList: React.FC = () => {
                     onChange={e => setFormData({...formData, slug: e.target.value})}
                     placeholder="e.g. health-safety"
                 />
-            </div>
-            <div>
+            </div> */}
+            {/* <div>
                 <Label>Description</Label>
                 <textarea 
                     className="w-full rounded-lg border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-primary-500"
@@ -224,8 +226,8 @@ export const CategoryList: React.FC = () => {
                     onChange={e => setFormData({...formData, description: e.target.value})}
                     placeholder="Brief description of this category..."
                 />
-            </div>
-            <div className="flex items-center gap-2">
+            </div> */}
+            {/* <div className="flex items-center gap-2">
                 <input 
                     type="checkbox" 
                     id="status"
@@ -234,7 +236,7 @@ export const CategoryList: React.FC = () => {
                     className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500 border-gray-300"
                 />
                 <label htmlFor="status" className="text-sm text-slate-700 font-medium">Active</label>
-            </div>
+            </div> */}
             
             <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
                 <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>Cancel</Button>

@@ -1,7 +1,8 @@
 import { BlogState, PublishPayload, Category } from '../types';
 
 // Using relative path to utilize Vite proxy
-const BASE_URL = 'https://devian.amwaus.com/'; 
+// const BASE_URL = 'https://devian.amwaus.com/'; 
+const BASE_URL = 'https://production.amwaus.com/'; 
 
 // Helper to map Backend JSON -> Frontend State
 const mapApiToBlog = (data: any): BlogState => {
@@ -9,13 +10,13 @@ const mapApiToBlog = (data: any): BlogState => {
     id: data.id?.toString(),
     title: data.title || '',
     categoryId: data.category_id?.toString() || '', // Map category_id
-    category: data.category_name || data.category || 'Uncategorized',
+    category: data.categorie_name || data.category || 'Uncategorized',
     shortDescription: data.short_description || '', // Maps snake_case to camelCase
     slug: data.slug || '',
     body: data.content || '',
     tags: data.tags ? (Array.isArray(data.tags) ? data.tags : data.tags.split(',')) : [],
     featuredImage: data.blog_img 
-      ? (data.blog_img.startsWith('http') ? data.blog_img : `https://devian.amwaus.com/${data.blog_img}`) 
+      ? (data.blog_img.startsWith('http') ? data.blog_img : `${BASE_URL+data.blog_img}`) 
       : null,
     status: (data.status === 'true' || data.status === true || data.status === 'PUBLISHED') ? 'PUBLISHED' : 'DRAFT',
     publishedAt: data.created_at || data.Timestamp || null,
@@ -35,9 +36,9 @@ const mapApiToCategory = (data: any): Category => {
   return {
     id: data.id?.toString(),
     name: data.category_name || data.name || '',
-    slug: data.slug || '',
-    description: data.description || '',
-    status: data.status === 1 || data.status === '1' || data.status === true ? 'active' : 'inactive'
+    // slug: data.slug || '',
+    // description: data.description || '',
+    // status: data.status === 1 || data.status === '1' || data.status === true ? 'active' : 'inactive'
   };
 };
 
@@ -52,7 +53,7 @@ export const api = {
       if (!response.ok) throw new Error('Failed to fetch blogs');
       const data = await response.json();
       
-      const rawList = Array.isArray(data) ? data : (data.data || []);
+      const rawList = Array.isArray(data) ? data : (data.data || []).reverse();
       return rawList.map(mapApiToBlog);
     } catch (error) {
       console.error("API Error:", error);
@@ -146,10 +147,7 @@ export const api = {
   storeCategory: async (category: Category): Promise<Category> => {
     const payload = {
         id: category.id,
-        category_name: category.name,
-        slug: category.slug,
-        description: category.description,
-        status: category.status === 'active' ? 1 : 0
+        name: category.name,
     };
     
     const response = await fetch(`${BASE_URL}api/blogCategory/store_blog_category`, {

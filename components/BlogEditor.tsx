@@ -144,6 +144,8 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ initialData, onBack, onS
     if (!blogData.body || blogData.body === '<p></p>') errors.push("Content is required!");
     if (!blogData.featuredImage) errors.push("Blog image is required!");
     if (!blogData.slug) errors.push("The slug field is required.");
+    if (blogData.seoFields.metaDescription && blogData.seoFields.metaDescription.length < 5 ) errors.push("The meta description field must be at least 5 characters.");
+    if (blogData.slug && blogData.slug.length < 5 ) errors.push("The slug field must be at least 5 characters.");
     
     // Assuming categoryId is mandatory based on validation object "category_id"
     if (!blogData.categoryId) errors.push("The category id field is required.");
